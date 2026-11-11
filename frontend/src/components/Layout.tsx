@@ -5,6 +5,7 @@ import {
   Boxes,
   ClipboardList,
   Cpu,
+  FileUp,
   History,
   LogOut,
   Menu,
@@ -24,6 +25,7 @@ const NAV = [
   { to: "/reports", label: "Reports", icon: ClipboardList },
   { to: "/history", label: "History", icon: History },
   { to: "/model", label: "Model", icon: Cpu },
+  { to: "/import", label: "Import", icon: FileUp, adminOnly: true },
 ];
 
 function useTheme() {
@@ -52,7 +54,7 @@ export default function Layout() {
 
   const navItems = (
     <nav className="flex flex-col gap-1 px-3">
-      {NAV.map(({ to, label, icon: Icon, end }) => (
+      {NAV.filter((item) => !item.adminOnly || user?.is_admin).map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}
           to={to}

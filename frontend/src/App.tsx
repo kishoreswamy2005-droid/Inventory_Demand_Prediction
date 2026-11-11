@@ -10,6 +10,7 @@ import RecommendationsPage from "./pages/RecommendationsPage";
 import ReportsPage from "./pages/ReportsPage";
 import HistoryPage from "./pages/HistoryPage";
 import ModelPage from "./pages/ModelPage";
+import ImportPage from "./pages/ImportPage";
 
 function Protected({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth();
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="reports" element={<ReportsPage />} />
         <Route path="history" element={<HistoryPage />} />
         <Route path="model" element={<ModelPage />} />
+        <Route path="import" element={<ImportPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
