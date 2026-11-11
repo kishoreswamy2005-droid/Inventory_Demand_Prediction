@@ -1,0 +1,957 @@
+# PROJECT: AI-POWERED INVENTORY DEMAND PREDICTION SYSTEM
+
+## ROLE
+
+Act as a Senior Full-Stack Developer, Machine Learning Engineer, Data Scientist, UI/UX Designer, and Software Architect.
+
+Build a complete, production-oriented Inventory Demand Prediction System using the Google Colab notebook, trained ML model, and dataset that I have provided.
+
+Do not build just a static dashboard or UI prototype. Build a fully functional application with frontend, backend, ML model integration, database persistence, analytics, prediction workflows, validation, and responsive design.
+
+The application must use my existing trained model as its initial prediction engine.
+
+---
+
+# PHASE 1 — UNDERSTAND THE PROVIDED FILES
+
+Before writing code, inspect all provided files.
+
+### 1. Google Colab notebook
+
+Read `Inventory_Demand_Prediction.ipynb`.
+
+My completed ML workflow includes:
+
+- Dataset loading.
+- Data cleaning and inspection.
+- Exploratory Data Analysis.
+- Date feature engineering.
+- Chronological 80/20 train-test split.
+- OneHotEncoder preprocessing.
+- RandomForestRegressor model training.
+- Prediction.
+- MAE, RMSE, R², and WAPE evaluation.
+- Actual vs Predicted visualization.
+- Saving the trained model using Joblib.
+
+### 2. Dataset
+
+Dataset filename:
+
+`retail_store_inventory.csv`
+
+The dataset contains approximately 73,100 records and 15 original columns.
+
+Original columns:
+
+- Date
+- Store ID
+- Product ID
+- Category
+- Region
+- Inventory Level
+- Units Sold
+- Units Ordered
+- Demand Forecast
+- Price
+- Discount
+- Weather Condition
+- Holiday/Promotion
+- Competitor Pricing
+- Seasonality
+
+The target variable used in my notebook is:
+
+`Units Sold`
+
+### 3. Trained ML model
+
+Inspect:
+
+`inventory_demand_model.pkl`
+
+The model is a scikit-learn Pipeline containing:
+
+- ColumnTransformer
+- OneHotEncoder
+- RandomForestRegressor
+
+Random Forest configuration:
+
+- n_estimators = 200
+- max_depth = 20
+- min_samples_leaf = 2
+- random_state = 42
+- n_jobs = -1
+
+IMPORTANT:
+
+Do not assume the model is production-ready simply because it was trained successfully.
+
+Inspect the model's expected feature names, data types, preprocessing configuration, and prediction input schema.
+
+Validate that the dataset, notebook, and model are compatible.
+
+Do not change the feature order, feature names, or preprocessing requirements when calling the trained model.
+
+The notebook excludes `Units Sold`, `Date`, `Demand Forecast`, and `Units Ordered` from the input features, while retaining `Inventory Level` and the engineered date features.
+
+Investigate whether `Inventory Level` represents stock available before sales or a measurement taken after sales. If its timing cannot be verified, clearly document the leakage risk and do not silently claim that the model predicts true future demand.
+
+Also explain that `Units Sold` is observed sales and may underestimate actual demand when products are out of stock.
+
+If the supplied model cannot safely support the requested prediction workflow, preserve it as a baseline model and explain what additional training or feature engineering is needed. Never silently substitute a different model.
+
+---
+
+# PHASE 2 — PRODUCT OBJECTIVE
+
+Build an AI-powered Inventory Demand Prediction Dashboard that helps retail businesses:
+
+1. Monitor inventory levels.
+2. Analyze historical product sales.
+3. Predict expected product sales.
+4. Identify products with potential stock shortages.
+5. Identify overstocked products.
+6. Estimate recommended replenishment quantities.
+7. Compare actual sales with predicted sales.
+8. Understand store-wise and product-wise performance.
+9. Support inventory planning decisions.
+
+The system should be suitable for demonstrating a real-world retail inventory analytics workflow.
+
+---
+
+# PHASE 3 — TECHNOLOGY STACK
+
+Use the following stack unless the existing repository already has a suitable architecture.
+
+### Frontend
+
+- React.js
+- TypeScript
+- Vite
+- Tailwind CSS
+- Recharts for charts
+- Lucide React for icons
+- React Router
+- Axios
+
+### Backend
+
+- Python
+- FastAPI
+- Pydantic
+- Pandas
+- NumPy
+- Scikit-learn
+- Joblib
+
+### Database
+
+Use PostgreSQL for persistent application data.
+
+Use SQLAlchemy ORM and Alembic migrations.
+
+SQLite may be used for local development only if PostgreSQL is not available, but maintain compatibility with PostgreSQL.
+
+### Machine Learning
+
+- Existing Random Forest Pipeline.
+- Joblib model loading.
+- Pandas data processing.
+- NumPy calculations.
+
+### Deployment readiness
+
+- Docker
+- Docker Compose
+- Environment variables
+- Backend health checks
+- API documentation
+- Production configuration
+
+Do not introduce unnecessary technologies.
+
+---
+
+# PHASE 4 — RESPONSIVE DASHBOARD UI/UX
+
+Create a modern, professional SaaS-style dashboard.
+
+Design inspiration:
+
+- Modern analytics platforms.
+- Enterprise inventory management software.
+- Clean financial analytics dashboards.
+
+### Design requirements
+
+- Responsive on desktop, tablet, and mobile.
+- Professional typography.
+- Consistent spacing.
+- Clean card layouts.
+- Attractive charts.
+- Subtle shadows.
+- Rounded components.
+- Consistent color system.
+- Light and dark theme support.
+- Loading states.
+- Empty states.
+- Error states.
+- Toast notifications.
+- Accessible buttons and forms.
+
+### Responsive behavior
+
+Desktop:
+- Collapsible sidebar.
+- Main dashboard content.
+- Multi-column analytics cards.
+- Large chart layouts.
+
+Tablet:
+- Compact navigation.
+- Two-column cards where suitable.
+- Charts resize automatically.
+
+Mobile:
+- Sidebar becomes a mobile navigation drawer.
+- Single-column dashboard.
+- Charts fit the screen without horizontal overflow.
+- Tables become horizontally scrollable or use mobile-friendly cards.
+- Forms stack vertically.
+- Buttons and inputs remain touch-friendly.
+
+Never design the application for desktop only.
+
+Test at approximately these viewport sizes:
+
+- 1440px desktop.
+- 1024px laptop/tablet landscape.
+- 768px tablet.
+- 390px mobile.
+- 360px small mobile.
+
+---
+
+# PHASE 5 — APPLICATION MODULES
+
+## Module 1: Authentication
+
+Build a basic secure authentication system.
+
+Features:
+
+- Login.
+- Registration.
+- Logout.
+- Password hashing.
+- Protected dashboard routes.
+- User session management.
+
+Use secure authentication practices.
+
+Do not hardcode credentials or secrets.
+
+## Module 2: Main Dashboard
+
+Create the main dashboard with the following KPI cards:
+
+1. Total Products.
+2. Total Stores.
+3. Total Units Sold.
+4. Current Inventory.
+5. Predicted Demand.
+6. Low Stock Products.
+7. Overstocked Products.
+
+All KPI values must come from the backend/database.
+
+Do not hardcode dashboard statistics.
+
+### Dashboard charts
+
+Create:
+
+1. Daily Sales Trend.
+2. Actual vs Predicted Sales.
+3. Product-wise Sales.
+4. Category-wise Sales.
+5. Store-wise Sales.
+6. Inventory Level Overview.
+7. Monthly Sales Trend.
+8. Top 10 Best-Selling Products.
+9. Top 10 Low-Selling Products.
+
+Add date, store, category, and region filters wherever relevant.
+
+Charts must update when filters change.
+
+## Module 3: Inventory Management
+
+Create an inventory management page.
+
+Display:
+
+- Product ID.
+- Product Category.
+- Store ID.
+- Region.
+- Inventory Level.
+- Units Sold.
+- Price.
+- Discount.
+- Inventory Status.
+
+Inventory status should be derived using configurable business rules.
+
+Example statuses:
+
+- Healthy Stock.
+- Low Stock.
+- Critical Stock.
+- Overstocked.
+
+Allow users to:
+
+- Search products.
+- Filter by store.
+- Filter by category.
+- Filter by region.
+- Sort inventory.
+- View product details.
+- Edit inventory records where authorized.
+
+Do not invent business thresholds. Make thresholds configurable and explain their defaults.
+
+## Module 4: Demand Prediction
+
+This is the main machine-learning module.
+
+Create a dedicated prediction page.
+
+### Input fields
+
+Provide a prediction form containing the features required by the supplied model:
+
+- Store ID.
+- Product ID.
+- Category.
+- Region.
+- Inventory Level, only if its timing and model compatibility are validated.
+- Price.
+- Discount.
+- Weather Condition.
+- Holiday/Promotion.
+- Competitor Pricing.
+- Seasonality.
+- Year.
+- Month.
+- Day.
+- DayOfWeek.
+- DayOfYear.
+
+Date fields should automatically generate date-derived features.
+
+Do not ask users to enter date-derived features separately.
+
+Use dropdowns for categorical fields where possible.
+
+Validate all input values.
+
+### Prediction workflow
+
+1. User selects a store.
+2. User selects a product.
+3. User enters the relevant input values.
+4. Frontend sends the request to FastAPI.
+5. Backend validates the request.
+6. Backend constructs the exact feature DataFrame expected by the trained pipeline.
+7. Backend loads or reuses the trained model.
+8. Model generates the prediction.
+9. Backend returns the result.
+10. Frontend displays the result.
+
+Display:
+
+- Predicted Units Sold.
+- Selected Store.
+- Selected Product.
+- Prediction Date.
+- Model Name.
+- Model Version.
+- Prediction Status.
+
+Round predicted unit counts appropriately and explain the rounding behavior.
+
+Do not call the output a guaranteed future demand value. Label it as predicted sales unless a properly validated demand forecasting workflow is implemented.
+
+## Module 5: Smart Reorder Recommendation
+
+Create a replenishment recommendation module.
+
+Use configurable business rules.
+
+Example calculation:
+
+Recommended Reorder Quantity =
+max(0, Expected Demand During Lead Time + Safety Stock - Available Inventory)
+
+Where:
+
+Safety Stock =
+configurable buffer based on demand variability and service-level assumptions.
+
+Allow configuration of:
+
+- Supplier Lead Time.
+- Safety Stock.
+- Target Service Level.
+- Reorder Threshold.
+
+If reliable lead-time or demand variability data is unavailable, clearly label the result as an illustrative recommendation and allow users to configure the assumptions.
+
+Display:
+
+- Product ID.
+- Store ID.
+- Current Inventory.
+- Predicted Sales.
+- Safety Stock.
+- Recommended Reorder Quantity.
+- Risk Level.
+- Recommendation Reason.
+
+Risk categories:
+
+- Critical.
+- High.
+- Medium.
+- Low.
+
+Never recommend a negative reorder quantity.
+
+## Module 6: Reports and Analytics
+
+Create a reports page.
+
+Allow users to:
+
+- Select a date range.
+- Filter by store.
+- Filter by product.
+- Filter by category.
+- View sales reports.
+- View inventory reports.
+- View prediction reports.
+- Compare actual and predicted values.
+
+Provide CSV export.
+
+Provide PDF export if implemented reliably.
+
+Reports must be generated from real backend data.
+
+## Module 7: Prediction History
+
+Save every prediction in PostgreSQL.
+
+Store:
+
+- Prediction ID.
+- User ID.
+- Store ID.
+- Product ID.
+- Prediction Date.
+- Input Features.
+- Predicted Units Sold.
+- Model Version.
+- Created Timestamp.
+
+Create a prediction history page.
+
+Allow users to search, filter, and inspect previous predictions.
+
+Do not overwrite historical predictions when a new model is uploaded.
+
+---
+
+# PHASE 6 — BACKEND API DESIGN
+
+Build clean, documented FastAPI endpoints.
+
+Suggested endpoints:
+
+### Authentication
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+GET /api/auth/me
+
+POST /api/auth/logout
+
+### Dashboard
+
+GET /api/dashboard/summary
+
+GET /api/dashboard/sales-trend
+
+GET /api/dashboard/product-performance
+
+GET /api/dashboard/store-performance
+
+GET /api/dashboard/inventory-overview
+
+GET /api/dashboard/actual-vs-predicted
+
+### Inventory
+
+GET /api/inventory
+
+GET /api/inventory/{product_id}
+
+POST /api/inventory
+
+PUT /api/inventory/{record_id}
+
+DELETE /api/inventory/{record_id}
+
+### Prediction
+
+POST /api/predictions/predict
+
+GET /api/predictions/history
+
+GET /api/predictions/{prediction_id}
+
+### Recommendations
+
+GET /api/recommendations/reorder
+
+GET /api/recommendations/low-stock
+
+### Reports
+
+GET /api/reports/sales
+
+GET /api/reports/inventory
+
+GET /api/reports/predictions
+
+GET /api/reports/export/csv
+
+### System
+
+GET /health
+
+GET /api/model/status
+
+GET /api/model/metadata
+
+Use Pydantic request and response schemas.
+
+Add:
+
+- Proper HTTP status codes.
+- Input validation.
+- Centralized exception handling.
+- Logging.
+- Pagination.
+- Filtering.
+- API documentation.
+- CORS configuration.
+
+Do not expose stack traces or sensitive server information to the frontend.
+
+---
+
+# PHASE 7 — DATABASE DESIGN
+
+Create normalized database tables.
+
+Suggested tables:
+
+### users
+
+- id
+- name
+- email
+- password_hash
+- created_at
+
+### stores
+
+- id
+- store_id
+- region
+
+### products
+
+- id
+- product_id
+- category
+- price
+- created_at
+
+### inventory_records
+
+- id
+- store_id
+- product_id
+- date
+- inventory_level
+- units_sold
+- price
+- discount
+- created_at
+
+### predictions
+
+- id
+- user_id
+- store_id
+- product_id
+- prediction_date
+- input_features
+- predicted_units_sold
+- model_version
+- created_at
+
+### model_registry
+
+- id
+- model_name
+- model_version
+- model_path
+- training_date
+- evaluation_metrics
+- is_active
+
+Use appropriate primary keys, foreign keys, indexes, and constraints.
+
+Avoid duplicating the same dataset records during repeated imports.
+
+---
+
+# PHASE 8 — DATASET IMPORT
+
+Create an admin-only dataset import workflow.
+
+Features:
+
+- Upload CSV.
+- Validate file type.
+- Validate required columns.
+- Check data types.
+- Check missing values.
+- Check duplicate records.
+- Preview uploaded records.
+- Show import summary.
+- Import valid records into PostgreSQL.
+- Report invalid rows.
+
+Support the provided `retail_store_inventory.csv`.
+
+The import process must be repeatable and should not duplicate existing records.
+
+Do not silently discard invalid records.
+
+Show clear error messages.
+
+---
+
+# PHASE 9 — MACHINE LEARNING INTEGRATION
+
+Create a separate ML service/module.
+
+Suggested structure:
+
+backend/
+    app/
+        ml/
+            model_loader.py
+            prediction_service.py
+            feature_schema.py
+            model_validation.py
+            metrics.py
+
+### Model loading
+
+Load the existing Joblib model once when the application starts or through a safe model manager.
+
+Do not reload the model for every prediction request.
+
+Check:
+
+- Model file exists.
+- Model loads successfully.
+- Required input columns match.
+- Categorical preprocessing works.
+- Unknown categories are handled safely.
+- Predictions are finite numbers.
+- Prediction output is valid.
+
+Expose model status through an API.
+
+### Important ML limitations
+
+The supplied notebook trains a model to predict `Units Sold` using contemporaneous tabular features.
+
+It does not create lagged sales features such as:
+
+- Lag 1.
+- Lag 7.
+- Lag 14.
+- Lag 28.
+- Rolling mean 7.
+- Rolling mean 28.
+
+Therefore, do not claim that the existing model is a complete multi-day forecasting engine.
+
+Keep the supplied model as the baseline.
+
+Create a separate, clearly documented future improvement path for leakage-safe time-series forecasting.
+
+Any future lag features must be calculated separately for each Store ID and Product ID, shifted so that the prediction never uses the target value from the same day or future dates.
+
+Use chronological validation.
+
+Do not randomly split time-series records.
+
+---
+
+# PHASE 10 — MODEL PERFORMANCE AND MONITORING
+
+Create a model performance page.
+
+Display the evaluation metrics available from the notebook:
+
+- MAE.
+- RMSE.
+- R².
+- WAPE.
+
+If notebook outputs or metric values are unavailable, calculate them again from the saved test results or explicitly show that the metric is unavailable.
+
+Never invent metric values.
+
+Create actual-versus-predicted visualizations.
+
+When actual sales become available, allow users to compare actual and predicted sales.
+
+Track:
+
+- Prediction count.
+- Average prediction error.
+- MAE over time.
+- WAPE over time.
+- Model version.
+- Prediction failures.
+
+Do not treat a prediction as an actual result until the actual sales record is available.
+
+---
+
+# PHASE 11 — SECURITY AND PRODUCTION QUALITY
+
+Implement:
+
+- Password hashing.
+- Environment-based secrets.
+- Request validation.
+- Secure file upload validation.
+- SQL injection protection through ORM usage.
+- CORS restrictions.
+- Authentication on protected routes.
+- Authorization for admin features.
+- API rate limiting where appropriate.
+- Structured logging.
+- Error handling.
+- Database migrations.
+- Backend health checks.
+
+Never commit:
+
+- Database passwords.
+- API keys.
+- Secret tokens.
+- Private credentials.
+
+Create `.env.example`.
+
+---
+
+# PHASE 12 — PROJECT STRUCTURE
+
+Use a clean and maintainable structure similar to:
+
+inventory-demand-system/
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── layouts/
+│   │   ├── charts/
+│   │   ├── services/
+│   │   ├── hooks/
+│   │   ├── types/
+│   │   └── App.tsx
+│   ├── public/
+│   └── package.json
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── core/
+│   │   ├── database/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   ├── ml/
+│   │   └── main.py
+│   ├── tests/
+│   └── requirements.txt
+│
+├── artifacts/
+│   └── inventory_demand_model.pkl
+│
+├── dataset/
+│   └── retail_store_inventory.csv
+│
+├── docker-compose.yml
+├── .env.example
+├── README.md
+└── .gitignore
+
+You may improve this structure if there is a strong technical reason.
+
+---
+
+# PHASE 13 — TESTING
+
+Write automated tests.
+
+### Backend tests
+
+- API health test.
+- Authentication tests.
+- Dataset import tests.
+- Database CRUD tests.
+- Prediction API tests.
+- Invalid input tests.
+- Model loading tests.
+- Unknown category tests.
+- Prediction output validation tests.
+
+### Frontend tests
+
+- Dashboard rendering.
+- Navigation.
+- Responsive layout.
+- Prediction form validation.
+- API error handling.
+- Loading states.
+- Filter behavior.
+
+### Integration tests
+
+Verify:
+
+1. User logs in.
+2. Dashboard loads.
+3. Dataset records appear.
+4. User selects a product.
+5. User submits prediction inputs.
+6. Backend calls the actual trained model.
+7. Prediction appears in the frontend.
+8. Prediction is stored in the database.
+9. Prediction history displays the saved result.
+
+Do not use fake prediction responses in production application workflows.
+
+---
+
+# PHASE 14 — DEPLOYMENT
+
+Prepare the complete application for local execution and deployment.
+
+Provide:
+
+- Dockerfile for frontend if needed.
+- Dockerfile for backend.
+- Docker Compose.
+- PostgreSQL configuration.
+- Environment variables.
+- Database migrations.
+- Startup instructions.
+- Production build instructions.
+- Health checks.
+
+The application should run using a simple command such as:
+
+docker compose up --build
+
+Document any required setup steps.
+
+---
+
+# PHASE 15 — FINAL ACCEPTANCE CRITERIA
+
+The project is complete only when:
+
+1. Frontend runs successfully.
+2. Backend runs successfully.
+3. PostgreSQL connects successfully.
+4. Dataset imports successfully.
+5. Existing trained model loads successfully.
+6. Prediction API calls the actual trained model.
+7. Prediction results appear in the dashboard.
+8. Predictions are saved in the database.
+9. Dashboard analytics use actual database records.
+10. Reports can be generated and exported.
+11. Inventory recommendations use configurable business rules.
+12. Authentication and protected routes work.
+13. All major screens are responsive.
+14. No horizontal overflow exists on mobile.
+15. Automated tests pass.
+16. Docker Compose starts the application successfully.
+17. README contains complete setup and execution instructions.
+
+---
+
+# DEVELOPMENT EXECUTION RULES
+
+Work phase by phase.
+
+Do not generate the entire project in one huge, unverified code dump.
+
+For each phase:
+
+1. Inspect the existing repository.
+2. Explain the implementation plan briefly.
+3. Create the required files.
+4. Implement the functionality.
+5. Run the application or relevant tests.
+6. Fix errors before proceeding.
+7. Report completed work.
+8. Identify the next phase.
+
+Do not overwrite my original notebook or trained model.
+
+Do not retrain the model unless there is a verified compatibility, leakage, or performance reason.
+
+Do not create fake dashboard data.
+
+Do not leave buttons non-functional.
+
+Do not use placeholder API responses.
+
+Do not claim a feature is complete unless it has been implemented and tested.
+
+Start with PHASE 1: inspect the notebook, dataset, trained model, and current repository. Then create the technical architecture and implementation plan.
+
+Build this as a real, responsive, maintainable Inventory Demand Prediction application.
